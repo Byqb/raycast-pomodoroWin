@@ -1,0 +1,106 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "pomodoro",
+  "title": "Pomodoro",
+  "description": "Cute Pixel Pomodoro Timer",
+  "icon": "po.png",
+  "license": "MIT",
+  "preferences": [
+    {
+      "name": "pomodoroDuration",
+      "type": "textfield",
+      "required": false,
+      "title": "Pomodoro Duration",
+      "description": "Default pomodoro duration (e.g., 25m, 1h)",
+      "default": "25m",
+      "placeholder": "25m"
+    },
+    {
+      "name": "shortBreakDuration",
+      "type": "textfield",
+      "required": false,
+      "title": "Short Break Duration",
+      "description": "Short break duration (e.g., 5m)",
+      "default": "5m",
+      "placeholder": "5m"
+    },
+    {
+      "name": "longBreakDuration",
+      "type": "textfield",
+      "required": false,
+      "title": "Long Break Duration",
+      "description": "Long break duration (e.g., 15m)",
+      "default": "15m",
+      "placeholder": "15m"
+    },
+    {
+      "name": "autoStartBreaks",
+      "type": "checkbox",
+      "required": false,
+      "title": "Auto-start Breaks",
+      "label": "Automatically start break timer after pomodoro completes",
+      "description": "Enable to auto-start breaks",
+      "default": false
+    },
+    {
+      "name": "longBreakInterval",
+      "type": "textfield",
+      "required": false,
+      "title": "Long Break Interval",
+      "description": "Number of pomodoros before long break",
+      "default": "4",
+      "placeholder": "4"
+    },
+    {
+      "name": "enableBackgroundMode",
+      "type": "checkbox",
+      "required": false,
+      "title": "Enable Background Mode",
+      "label": "Allow starting or sending timer to background (close window)",
+      "default": true
+    }
+  ],
+  "commands": [
+    {
+      "name": "pomodoro",
+      "title": "Pomodoro Timer",
+      "description": "Start focus timer with popup",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "duration",
+          "placeholder": "e.g., 25m, 1h, 90s",
+          "type": "text",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.103.0",
+    "@raycast/utils": "^2.2.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.0.4",
+    "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix",
+    "build": "ray build",
+    "publish": "npx @raycast/api@latest publish",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1"
+  },
+  "author": "Byqb",
+  "platforms": [
+    "Windows"
+  ],
+  "categories": [
+    "Productivity"
+  ]
+}
