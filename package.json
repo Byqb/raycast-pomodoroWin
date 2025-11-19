@@ -56,6 +56,7 @@
       "type": "checkbox",
       "required": false,
       "title": "Enable Background Mode",
+      "description": "Allow timer to run in background when window is closed",
       "label": "Allow starting or sending timer to background (close window)",
       "default": true
     }
@@ -69,6 +70,7 @@
       "arguments": [
         {
           "name": "duration",
+          "description": "Custom timer duration (supports formats like 25m, 1h, 90s)",
           "placeholder": "e.g., 25m, 1h, 90s",
           "type": "text",
           "required": false
@@ -78,7 +80,9 @@
   ],
   "dependencies": {
     "@raycast/api": "^1.103.0",
-    "@raycast/utils": "^2.2.1"
+    "@raycast/utils": "^2.2.2",
+    "lint": "^1.1.2",
+    "ray": "^0.0.1"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",

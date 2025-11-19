@@ -80,7 +80,7 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
   const prefs = getPreferenceDurations();
   const customDuration = parseDuration(props.arguments.duration || "");
   const initialDuration = customDuration || prefs.pomodoro;
-  
+
   const [timeLeft, setTimeLeft] = useState(initialDuration);
   const [timerMode, setTimerMode] = useState<TimerMode>("pomodoro");
   const [timerState, setTimerState] = useState<TimerState>("idle");
@@ -93,7 +93,6 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
     todayPomodoros: 0,
     lastCompletedDate: new Date().toDateString(),
   });
-
 
   // Load saved state and stats on mount
   useEffect(() => {
@@ -115,9 +114,10 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
       const prefs = getPreferenceDurations();
-      const duration = timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro
-        ? customTimerDuration
-        : getDuration(timerMode);
+      const duration =
+        timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro
+          ? customTimerDuration
+          : getDuration(timerMode);
       const newTimeLeft = Math.max(0, duration - elapsed);
       setTimeLeft(newTimeLeft);
       if (newTimeLeft <= 0) {
@@ -134,7 +134,7 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
       const saved = await LocalStorage.getItem<string>(STORAGE_KEYS.TIMER_STATE);
       if (saved) {
         const state = JSON.parse(saved);
-        
+
         // If there's a saved running timer, restore it
         if (state.timerState === "running" || state.timerState === "paused") {
           const savedTime = state.startTime || Date.now();
@@ -152,7 +152,7 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
           }
         }
       }
-      
+
       // If we have a custom duration from arguments, use that
       if (customDuration) {
         setCustomTimerDuration(customDuration);
@@ -177,7 +177,7 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
           timerState,
           startTime,
           customTimerDuration,
-        })
+        }),
       );
     } catch (error) {
       console.error("Failed to save timer state:", error);
@@ -190,13 +190,13 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
       if (saved) {
         const loadedStats = JSON.parse(saved);
         const today = new Date().toDateString();
-        
+
         // Reset daily stats if it's a new day
         if (loadedStats.lastCompletedDate !== today) {
           loadedStats.todayPomodoros = 0;
           loadedStats.lastCompletedDate = today;
         }
-        
+
         setStats(loadedStats);
       }
     } catch (error) {
@@ -229,10 +229,10 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
 
   const handleTimerComplete = async () => {
     setTimerState("complete");
-    
+
     // Clear saved state when timer completes
     await LocalStorage.removeItem(STORAGE_KEYS.TIMER_STATE);
-    
+
     // Update stats if pomodoro completed
     if (timerMode === "pomodoro") {
       const today = new Date().toDateString();
@@ -244,11 +244,11 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
         lastCompletedDate: today,
       };
       await saveStats(newStats);
-      
+
       // Check if we should suggest long break
       const prefs = getPreferenceDurations();
       const shouldSuggestLongBreak = newStats.completedPomodoros % prefs.longBreakInterval === 0;
-      
+
       // HUD-only notification (sound removed)
       if (shouldSuggestLongBreak) {
         await showHUD("🎉 Pomodoro done! LONG BREAK suggested 🌴");
@@ -258,7 +258,7 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
     } else {
       await showHUD("✅ Break complete! Ready for another pomodoro?");
     }
-    
+
     // Auto-start breaks if enabled
     const prefs = getPreferenceDurations();
     if (prefs.autoStartBreaks && timerMode === "pomodoro") {
@@ -280,18 +280,16 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
 
   const handleResume = () => {
     const prefs = getPreferenceDurations();
-    const duration = timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro 
-      ? customTimerDuration 
-      : getDuration(timerMode);
+    const duration =
+      timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro ? customTimerDuration : getDuration(timerMode);
     setStartTime(Date.now() - (duration - timeLeft) * 1000);
     setTimerState("running");
   };
 
   const handleReset = () => {
     const prefs = getPreferenceDurations();
-    const duration = timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro 
-      ? customTimerDuration 
-      : getDuration(timerMode);
+    const duration =
+      timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro ? customTimerDuration : getDuration(timerMode);
     setTimeLeft(duration);
     setTimerState("idle");
     setStartTime(Date.now());
@@ -355,9 +353,8 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
 
   const getProgressBar = (seconds: number): string => {
     const prefs = getPreferenceDurations();
-    const duration = timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro 
-      ? customTimerDuration 
-      : getDuration(timerMode);
+    const duration =
+      timerMode === "pomodoro" && customTimerDuration !== prefs.pomodoro ? customTimerDuration : getDuration(timerMode);
     // Clamp seconds so progress never exceeds full length
     const safeSeconds = Math.min(Math.max(seconds, 0), duration);
     const ratio = safeSeconds / duration;
@@ -403,15 +400,24 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
   };
 
   const prefsForView = getPreferenceDurations();
-  const activeDuration = timerMode === "pomodoro" ? (customTimerDuration) : getDuration(timerMode);
+  const activeDuration = timerMode === "pomodoro" ? customTimerDuration : getDuration(timerMode);
   const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
   const progressPercent = clamp(Math.floor(((activeDuration - timeLeft) / activeDuration) * 100), 0, 100);
-  const sessionsUntilLong = prefsForView.longBreakInterval - (stats.completedPomodoros % prefsForView.longBreakInterval || prefsForView.longBreakInterval);
-  const nextLongBreakInfo = timerMode === "pomodoro" ? `Long break in ${sessionsUntilLong === 0 ? prefsForView.longBreakInterval : sessionsUntilLong} pomodoro${sessionsUntilLong === 1 ? '' : 's'}` : '';
-  const durationLabel = timerMode === "pomodoro" && customTimerDuration !== prefsForView.pomodoro ? `Custom Duration: ${formatTime(customTimerDuration)}` : `Duration: ${formatTime(activeDuration)}`;
+  const sessionsUntilLong =
+    prefsForView.longBreakInterval -
+    (stats.completedPomodoros % prefsForView.longBreakInterval || prefsForView.longBreakInterval);
+  const nextLongBreakInfo =
+    timerMode === "pomodoro"
+      ? `Long break in ${sessionsUntilLong === 0 ? prefsForView.longBreakInterval : sessionsUntilLong} pomodoro${sessionsUntilLong === 1 ? "" : "s"}`
+      : "";
+  const durationLabel =
+    timerMode === "pomodoro" && customTimerDuration !== prefsForView.pomodoro
+      ? `Custom Duration: ${formatTime(customTimerDuration)}`
+      : `Duration: ${formatTime(activeDuration)}`;
 
-  const markdown = timerState === "complete"
-    ? `# 🎉 Mission Complete!
+  const markdown =
+    timerState === "complete"
+      ? `# 🎉 Mission Complete!
 
 ## ${timerMode === "pomodoro" ? "🏆 Session Finished!" : "✅ Break Over!"}
 
@@ -425,8 +431,9 @@ export default function Command(props: LaunchProps<{ arguments: Arguments }>) {
 
 ---
 ${timerMode === "pomodoro" ? "☕ Take a short break or start another." : "💪 Ready for more focus!"}
-${nextLongBreakInfo ? `\n\n🔄 ${nextLongBreakInfo}` : ''}
-` : `# ${getModeEmoji()} ${getModeTitle()}
+${nextLongBreakInfo ? `\n\n🔄 ${nextLongBreakInfo}` : ""}
+`
+      : `# ${getModeEmoji()} ${getModeTitle()}
 
 ## ⏰ ${formatTime(timeLeft)}
 ${durationLabel}
@@ -439,7 +446,7 @@ ${getProgressBar(timeLeft)}
 - Sessions: ${stats.todayPomodoros}
 - Streak: ${stats.currentStreak} ${stats.currentStreak === 1 ? "day" : "days"}
 - XP: ${stats.completedPomodoros * 100}
-${nextLongBreakInfo ? `- ${nextLongBreakInfo}` : ''}
+${nextLongBreakInfo ? `- ${nextLongBreakInfo}` : ""}
 
 ### Preferences
 - Work: ${formatTime(prefsForView.pomodoro)}
